@@ -715,14 +715,20 @@ parameter_list = list(
 initial_parameters = np.array(
     [1.0, 1.0]
 )
-
-
 print()
 print("Starting classical optimizer...")
 print(
     "Initial parameters:",
     initial_parameters
 )
+
+# Store QAOA energy at every optimizer iteration
+qaoa_history = []
+
+
+def qaoa_callback(parameters):
+    energy = qaoa_energy(parameters)
+    qaoa_history.append(float(energy))
 
 
 # COBYLA is a classical optimizer.
@@ -734,6 +740,7 @@ result = minimize(
     qaoa_energy,
     initial_parameters,
     method="COBYLA",
+    callback=qaoa_callback,
     options={
         "maxiter": 100,
         "rhobeg": 1.0
@@ -743,7 +750,12 @@ result = minimize(
 
 best_parameters = result.x
 best_energy = result.fun
+print()
+print("QAOA CONVERGENCE HISTORY")
+print("Iteration, Energy")
 
+for iteration, energy in enumerate(qaoa_history, start=1):
+    print(f"{iteration}, {energy:.2f}")
 
 print()
 print("===================================")

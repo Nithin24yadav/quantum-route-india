@@ -1,3 +1,5 @@
 qiskit==2.5.2
 requests
 python-dotenv
+pylatexenc
+matplotlib
